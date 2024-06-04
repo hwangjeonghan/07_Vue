@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+    <style>
+        .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .box{
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="box">
+                <header>todo list</header>
+                <!-- todo list 반복 -->
+                <main>
+                    <ul>
+                        <li v-for="index in list">{{index}} <button @click="remove(index)">x</button></li>
+                    </ul>
+                </main>
+                <!-- 입력창 -->
+                <div>
+                    <input type="text" v-model="todo"/>
+                    <button @click="addList">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const {createApp, reactive, ref} = Vue
+        
+        createApp({
+            setup(){
+                const todo = ref();
+                const list = ref([]);
+                
+                function addList(){
+                    console.log(todo)
+                    list.value.push(todo.value);
+                }
+
+                function remove(x){
+                    list.value = list.value.filter(value => value !== x );
+                    
+                }
+
+                return{
+                    todo,
+                    list,
+                    remove,
+                    addList
+                }
+            }
+        }).mount("#app");
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <!-- 
+        Vue.js '{{머스타치문법}}' Vue.js 바인딩 문법이다.
+        이를 다른 말로 보간법이라고 한다.
+        
+        반응성(Reactivity) : Vuew에서 데이터를 Dom에 바인딩하면 데이터 값이 변경될 때 마다 Dom이 자동으로 업데이트된다.
+                            이는 Vue가 데이터와 Dom을 연결하는 매커니즘으로 이를 통해 Vue 인스턴스의 데이터를 html 템플릿에 동적으로
+                            렌더링할 수 있다.
+
+        반응성 변수(Reactive Variabels) : vue.js에서 Ref나 reactive()와 같은 함수를 사용하여 반응성 변수를 생성할 수 있다.
+                                        이러한 반응성 변수는 vue의 반응성 시스템에 의해 관리되며, 변수 값이 변결될 때마다
+                                        연결된 html 요소에서 자동으로 반영된다.
+
+        데이터 바인딩(data binding) : vue에서 데이터와 dom을 연결하는 매커니즘으로 이를 통해 vue 인스턴스의 데이터를 html 템플릿에
+                                동적으로 렌더링할 수 있다.
+                                {{}}Mustache  문법으로 둘러싼 부분은 Vue의 데이터 바인딩을 사용하여 해당 데이터를 html에 표시하는 것을 의미
+     -->
+    <div id="app">{{message}} - {{message}} : message</div>
+    
+    <!-- 여기는 Vue가 아니다. -->
+    <div>{{message}}</div>
+
+    <script>
+
+        const {createApp, ref} = Vue
+        createApp({
+            setup(){
+                const message = ref("hellow vue!");
+                const data = 1;
+                return {
+                    message
+                }
+            }
+        }).mount("#app");
+
+    </script>
+</body>
+</html>

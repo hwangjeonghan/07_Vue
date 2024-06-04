@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+    <style>
+        /* style script는 step03에서 진행 */
+        .multiClass {
+            width: 100px;
+            height: 100px;
+            background-color: aqua;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="step01">
+        <h5>다중 속성 바인딩</h5>
+        <div v-bind="multiAttr">{{multiAttr.value}}</div>
+        <div v-bind:id="multiAttr.id" v-bind:class="multiAttr.class">{{multiAttr.value}}</div>
+    </div>
+
+    <br>
+
+    <div id="step02">
+        <!-- 
+            템플릿 내에서 데이터를 매개변수로 바인딩하고 메서드에 전달하여 메서드를 호출할 수 있다.
+         -->
+        <!-- title 속성은 f12 elements 확인 -->
+        <time :title="toTitleDate(date)" :datetime="date">
+            {{ formatDate(date) }}
+        </time>
+    </div>
+
+    <script>
+        const {createApp, ref} = Vue
+        
+        /*
+            주의 Obj의 key는 html 엘리먼트의 속성과 같은 값으로 정의해야 한다.
+        */
+        createApp({
+            setup() {
+                const multiAttr = ref({
+                    id: "multiId",
+                    class: "multiClass",
+                    value:"multiValue"
+                });
+
+                return {
+                    multiAttr
+                }
+            }
+        }).mount("#step01")
+
+        createApp({
+            setup(){
+                const date = new Date();
+                function formatDate(data){
+                    return `${data.getFullYear()} - ${data.getMonth()+1} - ${data.getDate()}`;
+                }
+
+                function toTitleDate(data){
+                    return `${data.toDateString()} ${data.toLocaleTimeString()}`;
+                }
+                return{
+                    date,
+                    toTitleDate,
+                    formatDate
+                }
+            }
+        }).mount("#step02")
+        
+    </script>
+</body>
+</html>

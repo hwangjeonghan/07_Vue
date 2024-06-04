@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="step01">
+        <p>
+            reactive count : {{state.count}}
+        </p>
+        <p>
+            ref num :{{refState.num}}
+        </p>
+        <p> anChangeNum : {{anChangeNum}}</p>
+
+        <button @click="setState">state++</button>
+        <button @click="setRefState">refstate++</button>
+        <button @click="setAndChangeNum">anChangeNum++</button>
+
+   </div>
+
+
+   <hr>
+
+   <div id="step02">
+        <p>{{reactiveCheck.test}}</p>
+        <button @click="setCheck">check</button>
+        <button @click="setReactiveCheck">reactiveCheck</button>
+        <button @click="chenckType">typeCheck</button>
+   </div>
+
+   <script>
+        /*
+            reactive
+            객체를 반응형으로 만들어 vue 템플릿에서 사용할 수 있도록 하는 유틸리티 함수이다.
+            반응형 객체는 속성 값이 변경될 때 템플릿에 자동으로 반영되며 ref는 단일 값에 대하여
+            반응성을 제공하지만 reactive는 객체를 반응형으로 만들어 템플릿에서 자동으로 반영하는 것이다.
+
+            reactive의 특징
+            1. 객체 반응성 : 객체 전체를 반응형으로 만든다.
+            2. 깊은 반응성 : 객체 내부에 또 다른 객체가 있다면 자동으로 반응형이 된다.
+            3. 템플릿 연동 : 객체의 속성 템플릿에 직접 사용한다
+        */ 
+        const {createApp, ref, reactive} = Vue;
+        
+
+        createApp({
+            setup(){
+                const state = reactive({count:0});
+                const refState = ref({num:0});
+                let anChangeNum = reactive(0);
+
+                function setState(){
+                    state.count++;
+                }
+
+                /*
+
+                */
+               function setRefState(){
+                    console.log(refState);
+                    refState.value.num++;
+                }
+
+                function setAndChangeNum(){
+                    anChangeNum++;
+                    console.log(anChangeNum);
+                }
+
+                return {
+                    state,
+                    refState,
+                    anChangeNum,
+                    setAndChangeNum,
+                    setState,
+                    setRefState
+                }
+            }
+        }).mount("#step01");
+
+
+        createApp({
+            setup(){
+                const check = {test:0};
+                const reactiveCheck = reactive(check);
+
+                function setCheck(){
+                    check.test++;
+                    console.log(check)
+                }
+
+                function setReactiveCheck(){
+                    reactiveCheck.test++;
+                }
+            
+                function chenckType(){
+                    console.log(check);
+                    console.log(reactiveCheck);
+                    console.log(check == reactiveCheck);
+                }
+                
+                return {
+                    reactiveCheck,
+                    setCheck,
+                    chenckType,
+                    setReactiveCheck
+                }
+            }
+
+        }).mount("#step02");
+        
+   </script>
+</body>
+</html>

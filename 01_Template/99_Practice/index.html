@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./data.js"></script>
+    <title>Vue</title>
+</head>
+
+<style>
+    
+    .character{
+        border: 2px solid black;
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+    }
+    
+
+    .imgContainer{
+        display: flex;
+        justify-content: center;
+    }
+    .imgContainer img{
+        
+        width: 50%;
+        height: 50%;
+    }
+    .container{
+        display: flex;
+        flex-direction: row;
+    }
+</style>
+<body>
+    <!-- 
+        이번 챕터에서는 간단하게 Vue의 문법을 적용하여 화면을 호출하는 실습을 진행함
+     -->
+    
+    <div id="app">
+        <header>
+            <h1> vue template 익숙해지기</h1>
+
+            <div class="container">
+                <div v-for="item in jsonData" :key="item.id" class="character">
+                    <h5>이름 : {{item.name}}</h5>
+                    <p>{{item.introduction}}</p>
+                    <div class="imgContainer">
+                        <img :src=item.img />
+                    </div>
+            </div>
+            </div>
+            
+        </header>
+        
+
+    </div>
+    
+    <script>
+        const { createApp } = Vue
+        createApp({
+            setup() {
+                const jsonData = scholar;
+                return {
+                    jsonData
+                }
+            },
+        }).mount("#app")
+
+    </script>
+</body>
+
+</html>

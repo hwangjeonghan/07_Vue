@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 
+        Event Handler
+        v-on:click="handler"의 표현식으로 이벤트에 자바스크립트 메서드를 트리거하여 실행하는 것이다.
+        일반적으로 이벤트 핸들러는 @click="handler"와 가타은 형식으로 이벤트를 축약할 수 있다.
+
+        @click - 이벤트 처리 지시자(directive)
+        @click 이벤트 처리 지시자는 html 요소에 클릭 이벤트를 감지하고 해당 이벤트가 발생할 때 
+        실행할 javascript 코드를 지정할 수 있다.
+        '@' 기호는 v-on 지시자의 축약형으로 이를 통해 vue 인스턴스의 이벤트 처리 메서드를 html 요소에
+        바인딩할 수 있으며 '@click'이외 '@keyup', '@submit'등의 이벤트에 대한 처리를 지사할 수 있다.
+
+     -->
+    <div id="step01"></div>
+    <hr>
+
+    <div id="step02">
+        <div>count: {{num}}</div>
+        <button @click="num++">
+            num++
+        </button>
+
+        <button @click="num--">
+            num--
+        </button>
+    </div>
+    <hr>
+
+
+    <div id="step03">
+        <div>{{number}}</div>
+        <button @click="notification('test')">
+            알림
+        </button>
+    </div>
+
+
+    <hr>
+
+    <div id="step04">
+        <button @keydown.enter="warn('이벤트 유형', $event)">
+            $Event
+        </button>
+
+        <button @click="(event)=> warn('이벤트 유형', event)">
+            ()=> event
+        </button>
+    </div>
+    <hr>
+    <!-- 
+        이벤트 수정자
+
+     -->
+    <div id="step05">
+        <div>
+            <a href="https://www.naver.com/" v-on:click.prevent="dosometing">버튼</a>
+        </div>
+        <br>
+        <!--
+            이벤트 버블링
+            요소 간의 이벤트 전파를 의미하며 하위 요소에서 발생한 이벤트가 상위 요소로 계속 전파되는 현상을 
+            의한다. 이러한 현상을 제어하기 위해서 event.stopPropagation(); 메서드를 호출하여 발생을 억제할 
+            수 있지만 vue.js에서는 이러한 형상을 v-on:click.stop()으로 제거가 가능하다.
+
+        -->
+        <div v-on:click="bubbling" style="background-color: aqua;">
+            <button v-on:click.stop="bubblingEvent"> 버블링</button>
+        </div>
+
+        <div>
+            <!-- 
+                self
+                button 요소가 아닌 하위 다른 요소를 클릭하는 경우 이벤트를 억제한다.
+            -->
+            <div>
+                <button v-on:click.self ="selfMethod">
+                    self <span> other</span>
+                </button>
+            </div>
+        </div>
+        
+        <hr>
+
+        <div>
+            <button v-on:click.once="onceMethod">once</button>
+        </div>
+
+        <hr>
+        <!-- 
+            이벤트 캡쳐링
+            부모 요소부터 자식 요소가지 이벤트가 전파되는 것을 의미한다.
+            버를링과 반대의 개념으로 생각하면 된다.
+         -->
+        <div @click.capture= "capture" style="background-color: red;">
+            <div @click="capturing" style="background-color:  rebeccapurple; width: 50%;">내부요소</div>
+        </div>
+
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue
+
+        createApp({
+            // 현재의 방식은 거의 사용하지 않는다. 
+            // 다만 CDN 환경에서 이렇게 사용하는 것이 맞는 것이다.
+            setup() {
+                const count = ref(0);
+                return {
+                    count
+                }
+            },
+            // vue cdn 표현식
+            template: `
+                <div> count is {{count}} </div>
+                <button @click="count++">
+                    count++
+                </button>
+            `
+
+        }).mount("#step01");
+
+
+        createApp({
+            setup() {
+                const num = ref(0);
+                return {
+                    num
+                }
+            }
+        }).mount("#step02");
+
+
+        createApp({
+            setup() {
+                const num = ref(0);
+
+                function notification(name) {
+                    // 프록시 객체의 값에 접근해서 확인해야 하기 때문에 .value  속성을 참고해야됨
+                    num.value++;
+                    alert(`${name} : ${num.value}개 입니다.`)
+                }
+
+
+                return {
+                    num,
+                    notification
+                }
+            }
+        }).mount("#step03");
+
+
+        createApp({
+            setup() {
+                function warn(message, event) {
+                    alert(message + " : " + event.type);
+                }
+
+                return {
+                    warn
+                }
+            }
+        }).mount("#step04")
+
+
+        createApp({
+            setup() {
+                /*
+                    Prevent
+                    preventDefault와 같은 기능을 수행하며 페이지 이동을 발생하지 않도록 막고
+                    메서드만 실행된다.
+                */
+                function dosometing() {
+                    console.log("클릭 이벤트 발생 그러나 페이지로 이동은 하지 않음");
+                }
+
+                /*
+                    버블링 테스트
+                */
+                function bubbling() {
+                    alert("보글보글?!");
+                }
+
+                function bubblingEvent(){
+                    alert("버블링 발생");
+                }
+
+                function selfMethod(){
+                    alert("self")
+                }
+
+            
+                function onceMethod(){
+                    alert("once");
+                }
+
+
+                function capture(){
+                    alert("부모요소 클릭")
+                }
+                
+                function capturing(){
+                    alert("자식요소 클릭")
+                }
+
+                return {
+                    dosometing,
+                    bubbling,
+                    bubblingEvent,
+                    selfMethod,
+                    onceMethod,
+                    capture,
+                    capturing
+                }
+            }
+
+        }).mount("#step05");
+    </script>
+</body>
+
+</html>

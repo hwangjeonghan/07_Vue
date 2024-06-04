@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./data.js"></script>
+    <style>
+        header {
+            text-align: center;
+        }
+        .rootContainer{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        article {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            border: 1px solid;
+            overflow: hidden;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            overflow: hidden;
+            border: 1px solid;
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-container img {
+            flex: 1;
+            /* 이미지 간격을 조절 */
+            max-width: calc(30%);
+        }
+        .characterImg {
+            width: 100%;
+            height: 60%;
+        }
+        .inputContainer{
+            border: 1px solid;
+            flex-direction: column;
+            align-items: center;
+            width: 500px;
+        }
+        .inputBox{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid;
+        }
+    </style>
+    <title>인물 블로그</title>
+</head>
+
+<body>
+    <div id="app" class="rootContainer">
+        <header>
+            <h1> vue v-model 이해하기</h1>
+        </header>
+        <main id="app">
+            <div>
+                <button @click="handlerState">{{state?"등록하기":"조회하기" }}</button>
+            </div>
+            <div v-if="state">
+                <button @click="handleMode">{{mode=="charater"? "skill-mode" : "charater-mode"}}</button>
+                <article v-if="mode == 'skill'">
+                    <section v-for="data in skills" :key="data.id">
+                        <label>기술 : {{data.skill}}</label>
+                        <label v-for="(item, index) in data.list">
+                            {{index}} : {{item}}
+                        </label>
+                        <p>소개 : {{data.introduction}}</p>
+                        <figure class="image-container">
+                            <img v-if="data.imgs" v-for="img in data.imgs" :src="img" :alt="data.name" />
+                            <div v-else>
+                                <h3>No images</h3>
+                            </div>
+                        </figure>
+                    </section>
+                </article>
+                <article v-else>
+                    <section v-for="data in character" :key="data.id">
+                        <label>이름 : {{data.name}}</label>
+                        <p>소개 : {{data.introduction}}</p>
+                        <figure>
+                            <img :src="data.img" :alt="data.name" class="characterImg" />
+                        </figure>
+                    </section>
+                </article>
+            </div>
+
+            <div v-else class="inputContainer">
+                <select v-model="type">
+                    <option value="charater">인물등록</option>
+                    <option value="skill">스킬등록</option>
+                </select>
+                <div v-if="type == 'charater'" class="inputBox">
+                    <label>name : </label> <input v-model="characterInfo.name" /><br>
+                    <label>introduction : </label> <input v-model="characterInfo.introduction" /><br>
+                    <label>img : </label> <input v-model="characterInfo.img" />
+                </div>
+                <div v-else-if="type == 'skill'" class="inputBox">
+                    <label>skill : </label> <input v-model="skillInfo.skill" /> <br>
+                    <label>list : </label> <input v-model="skillInfo.list" placeholder="기술 list는 ','로 구분해주세요" /> <br>
+                    <label>introduction : </label> <input v-model="skillInfo.introduction" /><br>
+                    <label>img:</label>
+                    <div v-for="index in imgCnt" :key="index">
+                        <input v-model="skillInfo.imgs[index-1]" placeholder="이미지 URL 입력" />
+                    </div>
+                    <button @click="imgCnt++">이미지 추가</button>
+                </div>
+                <button @click="pushHandler">등록하기</button>
+            </div>
+
+        </main>
+    </div>
+    <script>
+        const { createApp, ref, reactive } = Vue
+
+        createApp({
+            setup() {
+                {
+                    const character = reactive(scholar);
+                    const skills = reactive(msaSkill);
+                    const mode = ref("charater", "skill");
+                    const state = ref(true);
+                    const type = ref("charater");
+                    const skillInfo = reactive({
+                        id: 0,
+                        skill: "",
+                        list: "",
+                        introduction: "",
+                        imgs: []
+                    });
+                    const characterInfo = reactive({
+                        id: 0,
+                        name: "",
+                        introduction: "",
+                        img: ""
+                    });
+                    const imgCnt = ref(1);
+
+                    function handleMode() {
+                        if (mode.value == "charater") {
+                            mode.value = "skill"
+                        } else {
+                            mode.value = "charater"
+                        }
+                    }
+
+                    function handlerState() {
+                        state.value = !state.value
+                    }
+
+                    function pushHandler() {
+                        if (type.value == "charater") {
+                            characterInfo.id = character.length + 1;
+                            character.push({...characterInfo});
+
+                            Object.assign(characterInfo,{
+                                id: 0,
+                                name: "",
+                                introduction: "",
+                                img: ""
+                            });
+                        } else if (type.value == "skill") {
+                            skillInfo.id = skills.length + 1;
+                            skillInfo.list = skillInfo.list.split(",");
+                            skills.push({...skillInfo});
+
+                            Object.assign(skillInfo,{
+                                id: 0,
+                                skill: "",
+                                list: "",
+                                introduction: "",
+                                imgs: []
+                            });
+                            console.log(skills);
+                        }
+                    }
+
+                    return {
+                        character,
+                        skills,
+                        mode,
+                        state,
+                        type,
+                        skillInfo,
+                        characterInfo,
+                        imgCnt,
+
+                        handleMode,
+                        handlerState,
+                        pushHandler
+                    }
+                }
+            }
+        }).mount("#app")
+
+    </script>
+</body>
+
+</html>

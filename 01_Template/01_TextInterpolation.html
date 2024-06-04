@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="step01">
+        <!-- 
+            Text Interpolation
+            데이터 바인딩의 가장 기본적인 형태는 "Mustache" 구문을 사용한 텍스트 보간을 이용하는 것이다.
+            데이터 바인딩 범위는 Mount("#step01")을 기준으로 해당 엘리먼트부터 자식요소까지이다.
+         -->
+        <span>message : {{msg}}</span>
+        <hr>
+        <div v-text="msg">message : </div>
+        <div v-text="'msg'">message : </div>
+        <hr>
+        <h5>Raw Html</h5>
+        <p>Using text Interpolation : {{rawHtml}}</p>
+        <p>using v-html direative : <span v-html="rawHtml"></span></p>
+    </div>
+
+    <script>
+        const {createApp, ref}= Vue;
+        /*
+            createApp
+            함수는 Vue.js 3에서 컴포넌트 기반 앱을 생성하는 기본 함수로 Vue.js 2d에서 사용하는 new Vue 대신 ㅏㅅ용한다.
+
+            주요 역할
+            1. 컴포넌트 옵션 객체를 기반으로 Vue 인스턴스를 생성하며, vue 인스턴스는 앱의 루트 역할을 한다.
+            2. 템플릿, 데이터, 메서드 등 컴포넌트 옵션을 설정하고 관리한다.
+            3. vue 인스턴스를 Dom 요소에 마운트하며 앱을 실핸한다.
+
+            ref
+            vue.js 3에서 반응성 변수를 생성하는 중요한 함수이다.
+            반응성 변수란 데이터 값이 변결될 때 자동으로 템플릿을 업데이트하는 특수한 변수이다.
+
+            기능 
+            1. 값을 감싸고, 값이 변경될 때 템플릿을 자동으로 업데이트한다.
+            2. 기본값을 설정할 수 있다.
+            3. 객체 도는 배열을 감쌀 수 있다.
+        
+        */ 
+        createApp({
+            setup(){
+                return {
+                    msg : "hellow world",
+                    rawHtml : "<span style='color:red'> hellow world</span>"
+                }
+            }
+        }).mount("#step01");
+    </script>
+</body>
+</html>

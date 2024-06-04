@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 
+        watch obj
+        watch 함수를 사용하여 반응성 객체를 감시할 때, vue는 객체의 내부 변경을 감지하고 
+        해당 변경을 적절한 시점에 처리한다.
+        이 때 vue는 객체 전체를 새로 생성하는 것이 아니라 내부 속성의 변경을 감지하여 동일한 객체로 반환한다.
+        따라서 newValue와 oldValue는 내부적으로 동일한 객체를 참조하게 된다.
+        이러한 이유로 newValue와 oldValue는 동일한 값을 가지게 된다.
+        
+        newValue와 oldvalue는 같은 객체의 주소를 참조
+     -->
+    <div id="step01">
+        <p>
+            obj: {{obj.sum}}
+        </p>
+        <button @click="obj.x++">x++</button>
+        <button @click="obj.y++">y++</button>
+
+        <p>obj2 :{{obj2.sum}}</p>
+        <button @click="obj2.x++">x++</button>
+        <button @click="obj2.y++">y++</button>
+
+    </div>
+    <!-- 
+        deep watch 
+        watch 함수에서 사용되는 옵션 중 하나로 옵션을 설정하면 객체의 중첩된 속성에 대한 변경도 감지할 수 있다.
+        즉 객체 내부의 하위 속성이 변경될 때 watch 콜백이 실행되게 만들 수 있다
+        그러나 감시 대상의 모든 중첩 속성을 순회하는 방식으로 동작되어 큰 데이터 구조에 사용할 경우 비용이 많이든다.
+     -->
+    <div id="step02">
+        <p> value : {{state.value}}</p>
+        <button @click="state.value++">state.value++</button>
+
+        <p>nestedValue : {{state.nestedObject.nestedValue}} </p>
+        <button @click="state.nestedObject.nestedValue++">state.nestedObject.nestedValue++</button>
+
+    </div>
+
+    <script>
+        const { ref, watch, createApp, reactive } = Vue;
+
+        createApp({
+            setup() {
+                const obj = reactive({
+                    sum: 0,
+                    x: 0,
+                    y: 0
+                });
+
+                const obj2 = reactive({
+                    sum: 0,
+                    x: 0,
+                    y: 0
+                });
+
+                watch(obj, (newVal, oldVal) => {
+                    console.log("new : " + newVal.x);
+                    console.log("old : " + oldVal.x);
+                    obj.sum = newVal.x + newVal.y;
+                })
+
+
+                watch(
+                    () => {
+                        return [obj2.x, obj2.y];
+                    },
+                    (newVal, oldVal) => {
+                        console.log(newVal);
+                        console.log(oldVal);
+                        obj2.sum = newVal[0] + newVal[1];
+                    }
+                );
+
+                return {
+                    obj,
+                    obj2
+                }
+            }
+        }).mount("#step01");
+
+
+        createApp({
+            setup() {
+
+                const state = reactive({
+                    value: 1,
+                    nestedObject: {
+                        nestedValue: 2
+                    }
+                });
+                watch(
+                    () => state,
+                    (newValue, oldValue) => {
+                        console.log('Object changed!');
+                        console.log('New Value:', newValue);
+                        console.log('Old Value:', oldValue);
+                    },
+                    // 아래의 옵션을 제거하면 객체 상태 변화를 감지할 수 없음
+                    { deep: true }
+                );
+
+                return {
+                    state
+                }
+            }
+        }).mount("#step02")
+    </script>
+</body>
+
+</html>

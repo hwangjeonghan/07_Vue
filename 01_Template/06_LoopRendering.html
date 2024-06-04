@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="step01">
+        <h5>과일가게</h5>
+        <ol >
+            <li v-for="item in items">{{item}}</li>
+        </ol>
+    </div>
+    <hr>
+    <!-- 
+        객체 요소 loop
+     -->
+    <div id="step02">
+        <div v-for="info in profile">
+            {{info}}
+        </div>
+        <!-- 
+            표현식
+            v-for="(값, 키, 순서) in 객체"
+         -->
+        <li v-for="(value, key, index) in profile"> index={{index}} : key={{key}} : value={{value}}</li>
+    </div>
+    
+    <hr>
+
+    <div id="step03">
+        <li v-for="n in 10">{{n}}</li>
+    </div>
+
+    <hr>
+    
+    <div id="step04">
+        <template v-for="item in items">
+            <li>인기 : {{item}}</li>
+        </template>
+        <li v-for="item in items">{{item}}</li>
+    </div>
+    
+    <hr>
+
+    <div id="step05">
+        <!-- 
+            v-for과 v-if가 같은 노드에 존재하면 v-for보다 v-if이 높은 우선 순위를 가진다.
+            이것은 v-for의 item in items에서 item을 v-if에서 참조할 수 없다는 것으로 
+            다음과 같이 작성하면 오류가 발생한다.
+         -->
+        <!-- <li v-for="item in items" v-if="item.state">{{item.name}}</li> -->
+        <template v-for="item in items">
+            <li v-if="item.state">
+                {{item.name}}
+            </li>
+        </template>
+    </div>
+
+
+    <div id="step06">
+        <!-- 
+            :key - 상태유지(Maintaining State with)
+            vue가 렌더링된 요소 목록을 업데이트할 때 v-for는 기본적으로 인플레이스 패치 전략을 사용하게된다.
+            데이터 항목의 순서가 변경된 경우 dom 요소를 항목의 순서에 맞게 이동하는 대신 vue는 각 요소를 제자리에 패치하고
+            해당 인덱스에서 렌덜이해야하는 내용을 반영한다.
+            이때 vue가 각 노드의 id를 추적할 수 있도록 힌트를 주고 기존 요소를 재사용하여 순서를 변경할 수 있도록 고유한
+            정보를 제공해야하는데 이때 사용하는 것이 key이다.
+            
+            인플레이스 패치란
+            소프트웨어 또는 시스템을 업데이트 하는 방법 중 하나이다.
+            기존 소프트웨어를 제거하지 않고 직접 수정하여 업데이트를 적용하는 것을 의미한다.
+
+         -->
+        <div v-for="item in items" :key="item.id">
+            {{item.id}} - {{item.name}}    
+        </div>
+    </div>
+
+
+    <script>
+        const {createApp, ref, reactive} = Vue;
+        
+        createApp({
+            setup(){
+                const items = ref(['apple', 'Pineapple', 'Melon', "Watermelon"]);
+                
+                return {
+                    items
+                }
+            }
+        }).mount("#step01")
+        
+        createApp({
+            setup(){
+                const profile = reactive({
+                    name:"홍길동",
+                    address : "서울시 강남구",
+                    introduction:"Vue 전문가 의로운 홍길동"
+                })
+                return {
+                    profile
+                }
+            }
+        }).mount("#step02");
+
+        createApp().mount("#step03")
+
+       
+        createApp({
+            setup() {
+                const items = ref(["apple", "Pineapple", "Melon", "Watermelon"]);
+                return {
+                    items
+                }
+            }
+        }).mount("#step04")
+
+        createApp({
+            setup() {
+                const items = ref([{name:"apple", state:true}, {name:"Pineapple", state:false}, {name:"Melon", state:true},{name:"Melon", state:false}]);
+                return {
+                    items
+                }
+            }
+        }).mount("#step05")
+
+        createApp({
+            setup() {
+                const items = ref([{id:0, name:"apple"}, {id:1, name:"Pineapple"}, {id:2,name:"Melon"}]);
+                return {
+                    items
+                }
+            }
+        }).mount("#step06")
+    </script>
+</body>
+</html>

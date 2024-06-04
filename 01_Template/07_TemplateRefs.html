@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="step01">
+        <label>name</label> <input type="text" ref="nameBox" v-model="name"/>
+        <br>
+        <label> name={{name}}</label>
+    </div>
+
+    <hr>
+    
+    <div id="step02">
+        <div v-for="item in todos" ref="todolist">
+            <label> title:  {{item.title}}</label>
+        </div>
+    </div>
+
+
+    <script>
+        const {createApp, ref, reactive} = Vue
+
+        createApp({
+            setup(){
+                const name = ref("");
+                return {
+                    name
+                }
+            },
+            
+            mounted(){
+                this.$refs.nameBox.focus();
+            }
+        }).mount("#step01");
+
+        createApp({
+            setup() {
+                const todos = ref([
+                    {
+                        "title": "delectus aut autem",
+                    },
+                    {
+                        "title": "quis ut nam facilis et officia qui",
+                    },
+                    {
+                        "title": "fugiat veniam minus",
+                    },
+                    {
+                        "title": "et porro tempora",
+                    },
+                    {
+                        "title": "laboriosam mollitia et enim quasi adipisci quia provident illum",
+                    }]);
+
+                // const todolist = reactive({});
+
+                return {
+                    todos,
+                    // todolist
+                }
+            },
+            mounted() {
+                this.$refs.todolist.map(todo => console.log(todo.innerText))
+            }
+        }).mount("#step02")
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h3>속성 바인딩</h3>
+    <hr>
+    <div id="step01">
+        <h5> bind 구문</h5>
+        <div v-bind:id="dynamicId">{{value}}</div>
+        <div :id="skipId">{{skipValue}}</div>
+    </div>
+    <br>
+    <div id="step02">
+        <h5>비활성화</h5>
+        <input :disabled="isTrue" :value="isTrue"/>
+        <br>
+        <button @click="activation">{{isTrue}}</button>
+        <hr>
+        <h5>상수변수</h5>
+        <input :disabled="test" :value="test"/>
+        <button @click="testAction">{{test}}</button>
+        <hr>
+        <input :disabled="test" :value="test"/>
+        <button @click="testAction">{{test}}</button>
+        <hr>
+        <h5>일반 변수</h5>
+        <input :disabled="test1" :value="test1"/>
+        <button @click="test1Action">{{test1}}</button>
+
+    </div>
+    <script>
+        const {createApp, ref}= Vue
+        createApp({
+            setup(){
+                const dynamicId = ref("vue");
+                const value = ref("test");
+                const skipId = ref("skipId");
+                const skipValue = ref("skipValue");
+                return {
+                    dynamicId, value, skipId, skipValue
+                }
+            }
+        }).mount("#step01");
+
+        createApp({
+            setup(){
+                // 반응성 변수는 반응성 시스템에서 관리하기 때문에 속성의 값을 변경해야한다.
+                const isTrue = ref(false);
+                const activation = () =>{
+                    console.log(isTrue.value);
+                    isTrue.value = !isTrue.value;
+                }
+
+                // 일반 const 변수는 상태 변경이 불가능하다.
+                const test = true;
+                const testAction = () =>{
+                    console.log(test)
+                    test = !test;
+                }
+                
+                let test1 = true;
+                const test1Action = () =>{
+                    console.log(test1)
+                    test1 = !test1;
+                }
+                return{
+                    isTrue,
+                    activation,
+                    test,
+                    testAction,
+                    test1,
+                    test1Action
+                }
+            }
+        }).mount("#step02");
+    </script>
+</body>
+</html>

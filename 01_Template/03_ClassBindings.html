@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+    <style>
+        .static {
+            width: 150px;
+            height: 100px;
+        }
+
+        .active:hover {
+            background-color: red;
+            offset: 0.4;
+        }
+
+        .error {
+            text-decoration: dashed;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="step01">
+        <div :class="{active : isActive, static:size}">{{isActive}}</div>
+    </div>
+
+    <div id="step02">
+        <div :class="classObj">{{classObj}}</div>
+    </div>
+
+    <div id="step03">
+        <div :class="classObject">{{classObject}}</div>
+    </div>
+
+    <script>
+        const { createApp, ref, reactive, computed} = Vue;
+
+        createApp({
+            setup() {
+                const isActive = ref(true);
+                const isSize = ref(true);
+
+                return {
+                    isActive,
+                    isSize
+                }
+            }
+        }).mount("#step01")
+
+        /*
+            객체 형식으로 class를 정의하는 경우 
+        */
+        createApp({
+            setup() {
+                const isActive = ref(true);
+                const isSize = ref(true);
+                // reactive에서 다룬다.
+                const classObj = reactive({
+                    active: isActive,
+                    static: isSize
+                });
+
+                return {
+                    classObj
+                }
+            }
+        }).mount("#step02")
+        /*
+            computed
+            데이터를 기반으로 계산된 값을 만들고 관리하는데 유용한 기능이다.
+            computed 프로퍼티는 함수 형태로 정의되며, 함수 내에서 데이터 값을 참조하고 계산을 수행하고
+            새로운 값을 반환하는데 이렇게 반환된 값을 템플릿에 사용할 수 있으며 자동으로 업데이트된다.
+
+            computed와 일반 메서드의 차이
+            1. 자동 업데이트 : 데이터의 값이 변경되면 computed에서 반환된 값은 자동으로 업데이트 된다.
+            2. 캐싱 : 계산 결과는 캐싱되어 성능을 향상시킨다.
+        */
+        createApp({
+            setup() {
+                const isActive = ref("활성화");
+                const isSize = ref(true);
+                
+                const classObject = computed(() => ({
+                    active: isActive.value == "활성화",
+                    static: isSize
+                }))
+
+                return{
+                    classObject
+                }
+            }
+        }).mount("#step03")
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=devce-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 
+        watch
+        데이터의 변경을 감지하고 그에 따라 특정 동작을 수행하는 훅스이다.
+        watch는 vue 인스턴스가 생성되고 setup 함수 내부에서 사용된다.
+
+        [표현식]
+        watch(propertyName, callback(newValue, oldValue) =>{
+            1. propertyName : 변경을 감지할 속성
+            2. newValue : 현재 입력된 새로운 값
+            3. oldValue : 입력 이전의 값
+
+            변경 감지 시 수행할 동작
+        })
+     -->
+    <div id="step01">
+        <p>현재 값 : {{currentValue}}</p>
+        <p>이전 값 : {{previousValue}}</p>
+        <input v-model="currentValue" />
+    </div>
+
+    <!-- 
+        watch의 다중 인수
+        여러 반응서 변수를 감지하기 위해서 다음과 같이 배열로 묶어 여러 상태 변화를 감지할 수 있다.
+        
+        [표현식]
+        watch([x,y], callback(newVal, oldVal) =>{
+            1. propertyName : 변경을 감지할 속성
+            2. newValue : 현재 입력된 새로운 값
+            3. oldValue : 입력 이전의 값
+
+            변경 감지 시 수행할 동작
+        })
+
+     -->
+    <div id="step02">
+        <p>{{x}}</p>
+        <button @click="x++">x++</button>
+        <p>{{y}}</p>
+        <button @click="y++">y++</button>
+        <p>{{z}}</p>
+        <button @click="z++">z++</button>
+    </div>
+
+    <!-- 
+        watch의 다중 인수
+        여러 반응성 변수의 변화를 감지하여 로직을 수행하고 return을 하면 callback 함수에 매개변수로 전달할 수 있다.
+        이러한 경우 반응성 변수의 상태를 객체 형식으로 전달하기 때문에 getter를 이용하여 접근해야 한다. 
+        EX) x.value + y.value
+        [표현식]
+        watch(()=>{}, callback(sum)=>{
+            1. ()=>{} : 상태 변화를 감지할 속성 및 로직
+            2. callback(sum)=>{} : 앞선 로직을 수행하고 리턴 값을 매개변수로 전달받아 로직을 수행한다.
+
+            변경 감지 시 수행할 동작
+        })
+     -->
+
+    <div id="step03">
+        <p>{{sum}}</p>
+        <button @click="x++">{{x}}</button>
+        <button @click="y++">{{y}}</button>
+    </div>
+
+
+    <div id="step04">
+        <p>{{obj.sum}}</p>
+        <button @click="obj.x++">{{obj.x}}</button>
+        <button @click="obj.y++">{{obj.y}}</button>
+    </div>
+
+    <script>
+        const { createApp, watch, ref, reactive } = Vue;
+
+
+        createApp({
+            setup() {
+                const currentValue = ref("");
+                const previousValue = ref("");
+
+                // 동기 함수 예제
+                watch(currentValue, async (newVal, oldVal) => {
+                    // 외부 API 호출 
+                    // let test = fetch("https://api.sampleapis.com/wines/reds")
+                    //  .then(response => response.json());
+                    // 아래의 값은 promise가 반환됨
+                    // console.log(test);
+                    /*
+                        Promise는 자바스크립트에서 비동기 작업을 관리하고 처리하기 위해 사용되는 객체입니다
+                        Promise는 resolve(성공시) reject(실패시) 메서드를 갖는다.
+                        만약 Promise 블록상위 스코프에서 await를 하지 않는다면 반환 값은 Promise가 된다.
+                    */
+
+
+                    // let test = await fetch("https://api.sampleapis.com/wines/reds")
+                    //                 .then(response => response.json());
+                    // console.log(test);
+
+                    if (newVal !== previousValue.value) {
+                        console.log(newVal);
+                        console.log(oldVal);
+                        console.log("Watch === 데이터 변경 후 로직 실행")
+                        if (newVal == "서울") {
+                            previousValue.value = "관악구";
+                        }
+                        else if (newVal == "부산") {
+                            previousValue.value = "중구";
+                        }
+                    }
+                });
+
+                return {
+                    currentValue,
+                    previousValue
+                }
+            }
+        }).mount("#step01");
+
+
+        createApp({
+            setup() {
+                const x = ref(0);
+                const y = ref(0);
+                const z = ref(0);
+
+                watch([x, y], (newVal, oldVal) => {
+                    console.log("x : " + newVal[0]);
+                    console.log("y : " + newVal[1]);
+                    console.log("old : " + oldVal);
+                })
+
+                return {
+                    x,
+                    y,
+                    z
+                }
+            }
+        }).mount("#step02");
+
+
+        createApp({
+            setup() {
+                const x = ref(0);
+                const y = ref(0);
+                const sum = ref(0);
+
+                watch(
+                    () => {
+                        return x.value + y.value;
+                    },
+                    (result) => {
+                        sum.value = result;
+                    }
+                );
+
+                return {
+                    x,
+                    y,
+                    sum
+                }
+            }
+        }).mount("#step03");
+
+
+        createApp({
+            setup() {
+                const obj = reactive({
+                    sum: 0,
+                    x: 0,
+                    y: 0
+                });
+
+
+                watch(() => {
+                    return obj.x + obj.y;
+                },
+                (result, second)=>{
+                    obj.sum = result;
+                    console.log(second);
+                }
+                );
+
+
+                return {
+                    obj
+                }
+            }
+        }).mount("#step04");
+
+    </script>
+</body>
+
+</html>
